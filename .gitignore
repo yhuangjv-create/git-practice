@@ -1,0 +1,18 @@
+# 构建产物（EXE 通过 GitHub Releases 分发，不进代码仓库）
+dist/
+build/
+*.exe
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# 工具缓存
+.pytest_cache/
+.ruff_cache/
+
+# 用户录制数据（含个人输入记录，不公开）
+recordings/*.json
