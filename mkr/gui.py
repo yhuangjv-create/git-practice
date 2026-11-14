@@ -37,8 +37,8 @@ FONT_STAT_NUM = (FONT, 13, "bold")
 # ---------------------------------------------------------------- 国际化
 I18N: dict[str, dict[str, str]] = {
     "zh": {
-        "window_title": "鼠标键盘活动记录重复器 V1.6  ·  Clara",
-        "title_main": "鼠标键盘活动记录重复器 V1.6",
+        "window_title": "鼠标键盘活动记录重复器 V1.6.1  ·  Clara",
+        "title_main": "鼠标键盘活动记录重复器 V1.6.1",
         "title_sub": "记录鼠标轨迹 / 按键 / 滚轮 / 键盘，并按次数与间隔完整重复   ·   Clara 出品",
         "admin_ok": "✔ 管理员模式",
         "admin_no": "⚠ 普通权限（建议以管理员运行）",
@@ -114,8 +114,8 @@ I18N: dict[str, dict[str, str]] = {
         "capture_prompt": "请按下按键…（Esc 取消）",
     },
     "en": {
-        "window_title": "Mouse & Keyboard Recorder V1.6  ·  Clara",
-        "title_main": "Mouse & Keyboard Recorder V1.6",
+        "window_title": "Mouse & Keyboard Recorder V1.6.1  ·  Clara",
+        "title_main": "Mouse & Keyboard Recorder V1.6.1",
         "title_sub": "Record mouse trajectories / keys / wheels / keyboards, replay by count & interval   ·   Clara",
         "admin_ok": "✔ Admin Mode",
         "admin_no": "⚠ Normal Mode (Run as admin recommended)",

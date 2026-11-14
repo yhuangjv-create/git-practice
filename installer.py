@@ -14,9 +14,9 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 
 APP_NAME = "ClaraRecorder"
-APP_TITLE = "鼠标键盘活动记录重复器 V1.5"
+APP_TITLE = "鼠标键盘活动记录重复器 V1.6.1"
 COMPANY = "Clara"
-VERSION = "1.5"
+VERSION = "1.6.1"
 
 
 def _resource_dir() -> Path:
@@ -249,6 +249,16 @@ class InstallerApp:
             self._set_status("安装完成！", f"已安装到 {install_dir}", 100)
             self.root.after(500, lambda: self._show_page(3))
 
+        except PermissionError:
+            target = str(self._install_dir.get())
+            self.root.after(0, lambda: messagebox.showerror(
+                "安装失败：没有写入权限",
+                f"无法写入目录：\n{target}\n\n"
+                "Program Files 属于系统受保护目录，需要管理员权限。\n\n"
+                "解决办法（任选其一）：\n"
+                "1. 关闭本窗口，右键 ClaraSetup.exe → 以管理员身份运行\n"
+                "2. 在第 2 步换一个普通目录，例如 D:\\ClaraRecorder"))
+            self.root.after(0, lambda: self._show_page(0))
         except Exception as exc:
             self.root.after(0, lambda: messagebox.showerror("安装失败", str(exc)))
             self.root.after(0, lambda: self._show_page(0))

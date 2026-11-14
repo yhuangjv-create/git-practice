@@ -1,4 +1,4 @@
-# 鼠标键盘活动记录重复器 V1.6 · Clara
+# 鼠标键盘活动记录重复器 V1.6.1 · Clara
 
 > 零第三方依赖（纯 `ctypes` + `tkinter` + Python 标准库）的 Windows 桌面工具。
 > 微秒级时间分辨率录制，sub-100µs 精度回放注入。
@@ -16,7 +16,7 @@
       2. mkr/gui.py      → I18N 字典中文 window_title / title_main 里的 Vx.y
       3. mkr/gui.py      → I18N 字典英文 window_title / title_main 里的 Vx.y
       4. 本 README.zh-CN.md / README.md → 顶部标题里的 Vx.y + 元数据示例里的 version 值
-      搜索关键字 "V1.5" 和 "1.5.0" 即可定位所有需要改的位置
+      搜索关键字 "V1.6.1" 和 "1.6.1" 即可定位所有需要改的位置
 
   【B. README 内容同步更新】
       - 改动涉及的模块 → 更新第 3 节（调用关系）和第 4 节（逐文件解释）对应条目
@@ -278,7 +278,7 @@ run.bat
 **作用**：模块元信息 + 版本号单一真源。
 
 ```python
-__version__ = "1.5.0"   # ← 每次改版本号只改这里，gui.py I18N 字典里的 Vx.y 要同步改
+__version__ = "1.6.1"   # ← 每次改版本号只改这里，gui.py I18N 字典里的 Vx.y 要同步改
 __company__ = "Clara"
 ```
 
@@ -514,7 +514,7 @@ batch_window_ns = max(100_000, int(_BATCH_WINDOW_NS / speed))
 {
     "app": "鼠标键盘活动记录重复器",
     "company": "Clara",
-    "version": "1.5.0",
+    "version": "1.6.1",
     "name": "录制_20261112_143015",
     "created": "2026-11-12T14:30:15",
     "screen": { "width": 1920, "height": 1080, "refresh_hz": 144, "dpi": 150, "monitors": 2, "virtual": {...} },
@@ -551,7 +551,7 @@ root
 | 背景图层级 | Canvas 和 content 都 `place` 在同一个 `base` Frame 里（同 geometry manager），content 用 `tkraise()` 提到 Canvas 之上。**不同 geometry manager 混用时 place 永远在 pack/grid 之上**，这是之前背景图被面板盖住的根因 |
 | resize 防抖 | `after(80ms)` 重绘，避免每帧缩放卡顿 |
 | i18n | 顶部 `I18N` 字典约 70 个 key，zh/en 两套。`_t(key)` 取当前语言值，`_refresh_texts()` 遍历缓存的控件引用逐一 `configure(text=...)` |
-| 版本号同步 | 窗口标题 / Header 标题 / 副标题三处，中文和英文各两处——共 6 处 V1.5 硬编码 |
+| 版本号同步 | 窗口标题 / Header 标题 / 副标题三处，中文和英文各两处——共 6 处 V1.6.1 硬编码 |
 | 自适应窗口 | `_auto_size_window`: `winfo_reqwidth/height()` 取内容自然尺寸，clamp 到 `[minsize, 屏幕85%]`，居中。只在首次构建后调用一次 |
 | 语言切换按钮 | Frame + 两个 Label 模拟橙色按钮，当前语言白字、另一语言深棕字，点击切换后 `_refresh_texts()` 全量刷新 |
 
@@ -666,6 +666,12 @@ if exist "%PY_DIR%pythonw.exe" (
 > 格式：`### V版本号 (日期) \n - 改动内容（按影响模块分组）`
 > 每次改动后追加一条，不可删除历史记录。
 
+### V1.6.1 (2026-11-14)
+
+**默认配置**：
+- 默认全局快捷键由 `F9 / F10 / F11 / F12` 改为 `Alt+Shift+F9 / F10 / F11 / F12`，避免与常见软件的单键功能键冲突
+- `installer.py` / `pyproject.toml` 的版本号与 `mkr/__init__.py` 对齐（此前分别停留在 1.5 和 1.0.0）
+
 ### V1.6.0 (2026-11-13)
 
 **打包与发布**：
@@ -677,9 +683,6 @@ if exist "%PY_DIR%pythonw.exe" (
 - `relaunch_as_admin`：frozen 环境下不加 `-m mkr` 参数（EXE 自身就是入口）
 - `app.py::main`：frozen 环境下 `relaunch_as_admin` 传 `workdir=None`
 - `config.py` + `storage.py`：用户数据目录智能选择——EXE 同目录可写则存 EXE 旁（便携模式），不可写则存 `%APPDATA%/ClaraRecorder`（安装模式）
-
-**默认配置**：
-- 默认全局快捷键由 `F9 / F10 / F11 / F12` 改为 `Alt+Shift+F9 / F10 / F11 / F12`，避免与常见软件的单键功能键冲突
 
 **文档与开源**：
 - README 拆分为中英双语：`README.md`（英文精简版，GitHub 主位）+ `README.zh-CN.md`（中文完整版，权威文档）

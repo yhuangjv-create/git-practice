@@ -1,4 +1,4 @@
-# Mouse & Keyboard Activity Recorder V1.6 · Clara
+# Mouse & Keyboard Activity Recorder V1.6.1 · Clara
 
 > A zero-dependency Windows desktop tool built purely on `ctypes`, `tkinter`, and the Python standard library.
 > Microsecond-resolution recording, sub-100 µs replay injection.
@@ -154,4 +154,4 @@ Released under the [MIT License](LICENSE).
 
 ## Version
 
-Current version: **1.6.0**. See [CHANGELOG](README.zh-CN.md#changelog) for release history.
+Current version: **1.6.1**. See [CHANGELOG](README.zh-CN.md#changelog) for release history.
