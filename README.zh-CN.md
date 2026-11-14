@@ -156,6 +156,9 @@ MouseKeyboardRecorder/
 ├── tests/                      # 单元测试
 │   └── test_mkr.py
 │
+├── tools/                      # 开发工具
+│   └── backup.ps1              # 版本快照脚本（每次提交自动备份到 D:\桌面\Clara版本备份）
+│
 ├── pyproject.toml              # ruff + pytest 配置
 ├── LICENSE                     # MIT 许可证
 ├── README.md                   # 英文精简版（GitHub 主位）

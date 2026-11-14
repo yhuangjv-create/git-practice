@@ -99,7 +99,8 @@ git-practice/
 │   ├── storage.py       # Recording file I/O
 │   ├── gui.py           # tkinter UI (i18n, background, auto-sizing)
 │   └── app.py           # Assembly: wires every module together
-└── tests/               # Unit tests (hooks, recorder, player, hotkeys, config)
+├── tests/               # Unit tests (hooks, recorder, player, hotkeys, config)
+└── tools/               # Dev tooling: backup.ps1 (local version snapshots)
 ```
 
 ## How It Works
