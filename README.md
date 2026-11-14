@@ -148,6 +148,10 @@ the full changelog — is in the Chinese version:
 
 **[完整中文文档 · README.zh-CN.md](README.zh-CN.md)**
 
+## License
+
+Released under the [MIT License](LICENSE).
+
 ## Version
 
 Current version: **1.6.0**. See [CHANGELOG](README.zh-CN.md#changelog) for release history.

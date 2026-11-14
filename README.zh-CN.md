@@ -56,6 +56,7 @@
   - [4.11 `mkr/app.py`](#411-mkrapppy)
   - [4.12 `run.bat`](#412-runbat)
   - [4.13 `config.json`](#413-configjson)
+- [5. 许可证](#5-许可证)
 
 ---
 
@@ -154,7 +155,9 @@ MouseKeyboardRecorder/
 │   └── test_mkr.py
 │
 ├── pyproject.toml              # ruff + pytest 配置
-└── README.md                   # 本文件
+├── LICENSE                     # MIT 许可证
+├── README.md                   # 英文精简版（GitHub 主位）
+└── README.zh-CN.md             # 中文完整版（本文件，权威文档）
 ```
 
 **文件夹作用**：
@@ -649,6 +652,15 @@ if exist "%PY_DIR%pythonw.exe" (
 
 ---
 
+## 5. 许可证
+
+本项目采用 [MIT License](LICENSE) 开源。
+
+你可以自由使用、修改、分发本软件（包括商业用途），只需保留原始版权声明与许可证文本。
+本软件按"现状"提供，不附带任何明示或暗示的担保；因使用本软件产生的任何后果由使用者自行承担。
+
+---
+
 ## CHANGELOG
 
 > 格式：`### V版本号 (日期) \n - 改动内容（按影响模块分组）`
@@ -665,6 +677,10 @@ if exist "%PY_DIR%pythonw.exe" (
 - `relaunch_as_admin`：frozen 环境下不加 `-m mkr` 参数（EXE 自身就是入口）
 - `app.py::main`：frozen 环境下 `relaunch_as_admin` 传 `workdir=None`
 - `config.py` + `storage.py`：用户数据目录智能选择——EXE 同目录可写则存 EXE 旁（便携模式），不可写则存 `%APPDATA%/ClaraRecorder`（安装模式）
+
+**文档与开源**：
+- README 拆分为中英双语：`README.md`（英文精简版，GitHub 主位）+ `README.zh-CN.md`（中文完整版，权威文档）
+- 新增 `LICENSE`（MIT）
 
 ### V1.5.0 (2026-11-12)
 
