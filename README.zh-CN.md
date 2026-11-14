@@ -1,4 +1,4 @@
-# 鼠标键盘活动记录重复器 V1.6.1 · Clara
+# 鼠标键盘活动记录重复器 V1.6.2 · Clara
 
 > 零第三方依赖（纯 `ctypes` + `tkinter` + Python 标准库）的 Windows 桌面工具。
 > 微秒级时间分辨率录制，sub-100µs 精度回放注入。
@@ -18,7 +18,7 @@
       2. mkr/gui.py      → I18N 字典中文 window_title / title_main 里的 Vx.y
       3. mkr/gui.py      → I18N 字典英文 window_title / title_main 里的 Vx.y
       4. 本 README.zh-CN.md / README.md → 顶部标题里的 Vx.y + 元数据示例里的 version 值
-      搜索关键字 "V1.6.1" 和 "1.6.1" 即可定位所有需要改的位置
+      搜索关键字 "V1.6.2" 和 "1.6.2" 即可定位所有需要改的位置
 
   【B. README 内容同步更新】
       - 改动涉及的模块 → 更新第 3 节（调用关系）和第 4 节（逐文件解释）对应条目
@@ -157,7 +157,10 @@ MouseKeyboardRecorder/
 │   └── test_mkr.py
 │
 ├── tools/                      # 开发工具
-│   └── backup.ps1              # 版本快照脚本（每次提交自动备份到 D:\桌面\Clara版本备份）
+│   ├── setup.ps1               # 一次性启用钩子（core.hooksPath = tools/hooks）
+│   ├── backup.ps1              # 版本快照脚本（每次提交自动备份到 D:\桌面\Clara版本备份）
+│   └── hooks/
+│       └── post-commit         # 提交后自动备份（随仓库走，不再需要复制）
 │
 ├── pyproject.toml              # ruff + pytest 配置
 ├── LICENSE                     # MIT 许可证
@@ -283,7 +286,7 @@ run.bat
 **作用**：模块元信息 + 版本号单一真源。
 
 ```python
-__version__ = "1.6.1"   # ← 每次改版本号只改这里，gui.py I18N 字典里的 Vx.y 要同步改
+__version__ = "1.6.2"   # ← 每次改版本号只改这里，gui.py I18N 字典里的 Vx.y 要同步改
 __company__ = "Clara"
 ```
 
@@ -519,7 +522,7 @@ batch_window_ns = max(100_000, int(_BATCH_WINDOW_NS / speed))
 {
     "app": "鼠标键盘活动记录重复器",
     "company": "Clara",
-    "version": "1.6.1",
+    "version": "1.6.2",
     "name": "录制_20261112_143015",
     "created": "2026-11-12T14:30:15",
     "screen": { "width": 1920, "height": 1080, "refresh_hz": 144, "dpi": 150, "monitors": 2, "virtual": {...} },
@@ -552,11 +555,11 @@ root
 
 | 特性 | 实现方式 |
 |---|---|
-| 背景图 cover 模式 | `scale = max(w/sw, h/sh)` + 居中裁剪，PIL `LANCZOS` 高质量缩放 |
-| 背景图层级 | Canvas 和 content 都 `place` 在同一个 `base` Frame 里（同 geometry manager），content 用 `tkraise()` 提到 Canvas 之上。**不同 geometry manager 混用时 place 永远在 pack/grid 之上**，这是之前背景图被面板盖住的根因 |
+| 顶部封面横幅 | `header` 是一个 168px 高的 `Canvas`；背景图按 `scale = max(w/sw, h/sh)` 做 cover 裁剪（居中取横切面），PIL `LANCZOS` 缩放，尺寸变化时 80ms 防抖重绘 |
+| 横幅文字层级 | Canvas 内按「图片 → 压暗遮罩（stipple）→ 标题文字」顺序 `create_*`，后创建的覆盖在先创建的之上；语言切换时用 `itemconfig` 更新文字而非重建 |
 | resize 防抖 | `after(80ms)` 重绘，避免每帧缩放卡顿 |
 | i18n | 顶部 `I18N` 字典约 70 个 key，zh/en 两套。`_t(key)` 取当前语言值，`_refresh_texts()` 遍历缓存的控件引用逐一 `configure(text=...)` |
-| 版本号同步 | 窗口标题 / Header 标题 / 副标题三处，中文和英文各两处——共 6 处 V1.6.1 硬编码 |
+| 版本号同步 | 窗口标题 / Header 标题 / 副标题三处，中文和英文各两处——共 6 处 V1.6.2 硬编码 |
 | 自适应窗口 | `_auto_size_window`: `winfo_reqwidth/height()` 取内容自然尺寸，clamp 到 `[minsize, 屏幕85%]`，居中。只在首次构建后调用一次 |
 | 语言切换按钮 | Frame + 两个 Label 模拟橙色按钮，当前语言白字、另一语言深棕字，点击切换后 `_refresh_texts()` 全量刷新 |
 
@@ -670,6 +673,16 @@ if exist "%PY_DIR%pythonw.exe" (
 
 > 格式：`### V版本号 (日期) \n - 改动内容（按影响模块分组）`
 > 每次改动后追加一条，不可删除历史记录。
+
+### V1.6.2 (2026-11-14)
+
+**界面**：
+- 新增顶部封面横幅：主界面顶部 168 px 高的 `Canvas`，`assets/background.jpg` 按 cover 模式居中裁剪填充，标题与副标题叠加其上，窗口缩放时 80 ms 防抖重绘
+- Pillow 作为可选依赖（仅封面图需要）；未安装时横幅退回纯深蓝底，不影响启动
+
+**修复**：
+- `ClaraRecorder.spec` 资源打包路径由 `assets → background` 修正为 `assets → assets`，与运行时查找路径一致
+- `installer.py` 资源复制目标同步修正（此前复制到的目录无人读取，导致安装版没有封面图）
 
 ### V1.6.1 (2026-11-14)
 

@@ -3,9 +3,34 @@
 from __future__ import annotations
 
 import queue
+import sys
 import tkinter as tk
+from pathlib import Path
 from tkinter import filedialog, messagebox, simpledialog, ttk
 from typing import Any
+
+try:  # Pillow 为可选依赖，仅用于主界面封面图
+    from PIL import Image, ImageTk
+
+    _HAS_PIL = True
+    try:
+        _RESAMPLE = Image.Resampling.LANCZOS
+    except AttributeError:  # Pillow < 9.1
+        _RESAMPLE = Image.LANCZOS
+except Exception:  # noqa: BLE001
+    _HAS_PIL = False
+    _RESAMPLE = None
+
+
+def asset_dirs() -> list[Path]:
+    """按优先级返回资源目录：打包目录 → 开发目录 → EXE 同级 assets。"""
+    dirs: list[Path] = []
+    meipass = getattr(sys, "_MEIPASS", None)
+    if meipass:
+        dirs += [Path(meipass) / "assets", Path(meipass) / "background"]
+    dirs.append(Path(__file__).resolve().parent.parent / "assets")
+    dirs.append(Path(sys.executable).resolve().parent / "assets")
+    return dirs
 
 # ---------------------------------------------------------------- 配色
 NAVY = "#0f2438"
@@ -37,8 +62,8 @@ FONT_STAT_NUM = (FONT, 13, "bold")
 # ---------------------------------------------------------------- 国际化
 I18N: dict[str, dict[str, str]] = {
     "zh": {
-        "window_title": "鼠标键盘活动记录重复器 V1.6.1  ·  Clara",
-        "title_main": "鼠标键盘活动记录重复器 V1.6.1",
+        "window_title": "鼠标键盘活动记录重复器 V1.6.2  ·  Clara",
+        "title_main": "鼠标键盘活动记录重复器 V1.6.2",
         "title_sub": "记录鼠标轨迹 / 按键 / 滚轮 / 键盘，并按次数与间隔完整重复   ·   Clara 出品",
         "admin_ok": "✔ 管理员模式",
         "admin_no": "⚠ 普通权限（建议以管理员运行）",
@@ -114,8 +139,8 @@ I18N: dict[str, dict[str, str]] = {
         "capture_prompt": "请按下按键…（Esc 取消）",
     },
     "en": {
-        "window_title": "Mouse & Keyboard Recorder V1.6.1  ·  Clara",
-        "title_main": "Mouse & Keyboard Recorder V1.6.1",
+        "window_title": "Mouse & Keyboard Recorder V1.6.2  ·  Clara",
+        "title_main": "Mouse & Keyboard Recorder V1.6.2",
         "title_sub": "Record mouse trajectories / keys / wheels / keyboards, replay by count & interval   ·   Clara",
         "admin_ok": "✔ Admin Mode",
         "admin_no": "⚠ Normal Mode (Run as admin recommended)",
@@ -283,11 +308,11 @@ class MainWindow:
 
     def _refresh_texts(self) -> None:
         """切换语言后刷新所有已创建控件文本。"""
-        # header
+        # header（Canvas 横幅上的文字项）
         if self._ref_title_main:
-            self._ref_title_main.configure(text=self._t("title_main"))
+            self._banner.itemconfig(self._ref_title_main, text=self._t("title_main"))
         if self._ref_title_sub:
-            self._ref_title_sub.configure(text=self._t("title_sub"))
+            self._banner.itemconfig(self._ref_title_sub, text=self._t("title_sub"))
         # 大按钮
         self._refresh_action_buttons()
         # 保存/载入/清空
@@ -362,28 +387,31 @@ class MainWindow:
         win.geometry(f"{w}x{h}+{x}+{y}")
 
     def _build_header(self) -> None:
-        header = tk.Frame(self.root, bg=NAVY)
-        header.pack(fill="x", padx=16, pady=(14, 6))
+        """顶部封面横幅：背景图 cover 裁剪 + 标题叠加。"""
+        self._banner = tk.Canvas(self.root, height=168, bg=NAVY, highlightthickness=0, bd=0)
+        self._banner.pack(fill="x", padx=16, pady=(14, 6))
+        self._banner_photo = None
+        self._banner_job = None
+        self._banner_src = self._load_banner_source()
 
-        tk.Label(header, text="✦", font=("Segoe UI Symbol", 30, "bold"), fg=ACCENT, bg=NAVY).pack(
-            side="left", padx=(2, 10)
+        # 图片 → 压暗遮罩 → 文字，按此顺序创建，后者覆盖前者
+        self._banner_img_id = self._banner.create_image(0, 0, anchor="nw")
+        self._banner_shade_id = self._banner.create_rectangle(
+            0, 0, 0, 0, fill="#000000", stipple="gray25", outline=""
         )
+        self._banner_title_id = self._banner.create_text(
+            24, 68, anchor="w", text=self._t("title_main"), font=FONT_TITLE, fill=FG
+        )
+        self._banner_sub_id = self._banner.create_text(
+            24, 96, anchor="w", text=self._t("title_sub"), font=FONT_SUB, fill=MUTED
+        )
+        # 复用旧刷新入口：这两个变量现在是 Canvas item id
+        self._ref_title_main = self._banner_title_id
+        self._ref_title_sub = self._banner_sub_id
 
-        titles = tk.Frame(header, bg=NAVY)
-        titles.pack(side="left")
-        self._ref_title_main = tk.Label(
-            titles, text=self._t("title_main"), font=FONT_TITLE, fg=FG, bg=NAVY
-        )
-        self._ref_title_main.pack(anchor="w")
-        self._ref_title_sub = tk.Label(
-            titles, text=self._t("title_sub"), font=FONT_SUB, fg=MUTED, bg=NAVY
-        )
-        self._ref_title_sub.pack(anchor="w")
-
-        # 语言切换按钮（橙色底，两文字双色）
-        lang_frame = tk.Frame(header, bg=ORANGE, bd=0, highlightthickness=0, cursor="hand2")
-        lang_frame.pack(side="right", pady=(8, 0))
-        # 当前语言白字，另一灰字
+        # 语言切换按钮（浮在横幅中部右侧）
+        lang_frame = tk.Frame(self._banner, bg=ORANGE, bd=0, highlightthickness=0, cursor="hand2")
+        lang_frame.place(relx=1.0, rely=0.5, anchor="e", x=-16)
         zh_fg = "#ffffff" if self.lang == "zh" else "#2b1810"
         en_fg = "#ffffff" if self.lang == "en" else "#2b1810"
         tk.Label(
@@ -392,10 +420,54 @@ class MainWindow:
         tk.Label(
             lang_frame, text="English", font=(FONT, 10, "bold"), fg=en_fg, bg=ORANGE, padx=8, pady=4, cursor="hand2"
         ).pack(side="left")
-        # 整个 frame 绑定点击
         for w in (lang_frame, lang_frame.winfo_children()[0], lang_frame.winfo_children()[1]):
             w.bind("<Button-1>", lambda _e: self._switch_lang())
         self._ref_lang_btn = lang_frame  # 复用为切换时重绘的锚点
+
+        self._banner.bind("<Configure>", self._on_banner_configure)
+        self._redraw_banner()
+
+    def _load_banner_source(self):
+        """读取封面图；Pillow 缺失或文件不存在时返回 None（横幅退回纯色）。"""
+        if not _HAS_PIL:
+            return None
+        for base in asset_dirs():
+            for name in ("background.jpg", "background.png"):
+                p = base / name
+                if p.is_file():
+                    try:
+                        return Image.open(p).convert("RGB")
+                    except Exception:  # noqa: BLE001
+                        return None
+        return None
+
+    def _on_banner_configure(self, _event=None) -> None:
+        if self._banner_job:
+            self._banner.after_cancel(self._banner_job)
+        self._banner_job = self._banner.after(80, self._redraw_banner)
+
+    def _redraw_banner(self) -> None:
+        self._banner_job = None
+        w = self._banner.winfo_width()
+        h = self._banner.winfo_height()
+        if w <= 1 or h <= 1:
+            return
+        self._banner.coords(self._banner_shade_id, 0, 0, w, h)
+        self._banner.coords(self._banner_title_id, 24, h // 2 - 14)
+        self._banner.coords(self._banner_sub_id, 24, h // 2 + 16)
+        if self._banner_src is None:
+            return
+        src = self._banner_src
+        sw, sh = src.size
+        scale = max(w / sw, h / sh)
+        nw, nh = max(1, int(sw * scale + 0.5)), max(1, int(sh * scale + 0.5))
+        resized = src.resize((nw, nh), _RESAMPLE)
+        left = (nw - w) // 2
+        top = (nh - h) // 2
+        cropped = resized.crop((left, top, left + w, top + h))
+        self._banner_photo = ImageTk.PhotoImage(cropped)
+        self._banner.itemconfig(self._banner_img_id, image=self._banner_photo)
+        self._banner.coords(self._banner_img_id, 0, 0)
 
     def _render_lang_button(self) -> None:
         """重绘语言按钮颜色。"""

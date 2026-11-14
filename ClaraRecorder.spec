@@ -9,7 +9,7 @@ a = Analysis(
     ['entry.py'],
     pathex=[],
     binaries=[],
-    datas=[('assets', 'background')],
+    datas=[('assets', 'assets')],
     hiddenimports=hiddenimports,
     hookspath=[],
     hooksconfig={},

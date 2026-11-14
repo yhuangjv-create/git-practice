@@ -14,9 +14,9 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 
 APP_NAME = "ClaraRecorder"
-APP_TITLE = "鼠标键盘活动记录重复器 V1.6.1"
+APP_TITLE = "鼠标键盘活动记录重复器 V1.6.2"
 COMPANY = "Clara"
-VERSION = "1.6.1"
+VERSION = "1.6.2"
 
 
 def _resource_dir() -> Path:
@@ -225,14 +225,14 @@ class InstallerApp:
             shutil.copy2(source_exe, dest_exe)
 
             # 创建资产目录（如果资源里有）
-            assets_src = res_dir / "assets" / "background"
-            if assets_src.exists():
-                assets_dest = install_dir / "assets" / "background"
+            assets_src = res_dir / "assets"
+            if assets_src.is_dir():
+                assets_dest = install_dir / "assets"
                 assets_dest.mkdir(parents=True, exist_ok=True)
                 for f in assets_src.iterdir():
                     if f.is_file():
                         shutil.copy2(f, assets_dest / f.name)
-                self._set_status("复制资源文件...", "background.jpg", 55)
+                self._set_status("复制资源文件...", "assets/", 55)
 
             # 创建快捷方式
             if self._desktop_sc.get():

@@ -1,6 +1,6 @@
 [project]
 name = "mouse-keyboard-recorder"
-version = "1.6.1"
+version = "1.6.2"
 description = "鼠标键盘活动记录重复器（Clara 出品）— 零第三方依赖的 Windows 输入录制/回放工具"
 requires-python = ">=3.11"
 dependencies = []
