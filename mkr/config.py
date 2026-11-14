@@ -42,10 +42,10 @@ DEFAULTS: dict[str, Any] = {
     "repeat_count": 1,
     "interval_seconds": 1.0,
     "speed": 1.0,
-    "hotkey_start_record": "f9",
-    "hotkey_stop_record": "f10",
-    "hotkey_start_play": "f11",
-    "hotkey_stop_play": "f12",
+    "hotkey_start_record": "alt+shift+f9",
+    "hotkey_stop_record": "alt+shift+f10",
+    "hotkey_start_play": "alt+shift+f11",
+    "hotkey_stop_play": "alt+shift+f12",
     "last_recording": "",
 }
 

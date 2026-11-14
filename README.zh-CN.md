@@ -492,10 +492,10 @@ batch_window_ns = max(100_000, int(_BATCH_WINDOW_NS / speed))
     "repeat_count": 1,                    # 重复次数
     "interval_seconds": 1.0,              # 重复间隔（秒）
     "speed": 1.0,                         # 回放倍速
-    "hotkey_start_record": "f9",          # 4 个全局快捷键
-    "hotkey_stop_record": "f10",
-    "hotkey_start_play": "f11",
-    "hotkey_stop_play": "f12",
+    "hotkey_start_record": "alt+shift+f9",   # 4 个全局快捷键
+    "hotkey_stop_record": "alt+shift+f10",
+    "hotkey_start_play": "alt+shift+f11",
+    "hotkey_stop_play": "alt+shift+f12",
     "last_recording": "",                 # 上次保存的录制文件路径
 }
 ```
@@ -677,6 +677,9 @@ if exist "%PY_DIR%pythonw.exe" (
 - `relaunch_as_admin`：frozen 环境下不加 `-m mkr` 参数（EXE 自身就是入口）
 - `app.py::main`：frozen 环境下 `relaunch_as_admin` 传 `workdir=None`
 - `config.py` + `storage.py`：用户数据目录智能选择——EXE 同目录可写则存 EXE 旁（便携模式），不可写则存 `%APPDATA%/ClaraRecorder`（安装模式）
+
+**默认配置**：
+- 默认全局快捷键由 `F9 / F10 / F11 / F12` 改为 `Alt+Shift+F9 / F10 / F11 / F12`，避免与常见软件的单键功能键冲突
 
 **文档与开源**：
 - README 拆分为中英双语：`README.md`（英文精简版，GitHub 主位）+ `README.zh-CN.md`（中文完整版，权威文档）

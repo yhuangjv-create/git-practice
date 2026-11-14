@@ -61,10 +61,10 @@ python -m mkr
 
 | Action | Default |
 |---|---|
-| Start recording | `F9` |
-| Stop recording | `F10` |
-| Start replay | `F11` |
-| Stop replay | `F12` |
+| Start recording | `Alt+Shift+F9` |
+| Stop recording | `Alt+Shift+F10` |
+| Start replay | `Alt+Shift+F11` |
+| Stop replay | `Alt+Shift+F12` |
 
 All hotkeys can be changed in the in-app settings window and are stored in
 `config.json`.
