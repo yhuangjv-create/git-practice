@@ -9,6 +9,8 @@
 ![Platform](https://img.shields.io/badge/platform-Windows-lightgrey)
 ![Dependencies](https://img.shields.io/badge/dependencies-none-brightgreen)
 
+![Clara main window](assets/screenshot.png)
+
 ---
 
 ## Overview
